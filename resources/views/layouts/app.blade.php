@@ -2,65 +2,62 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Skydash Admin</title>
 
-    <!-- plugins:css -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ asset('assets/vendors/feather/feather.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/css/vendor.bundle.base.css') }}">
 
-    <!-- Material Design Icons (CDN) -->
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/7.2.96/css/materialdesignicons.min.css">
 
-    <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/vendors/ti-icons/css/themify-icons.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/mdi/css/materialdesignicons.min.css') }}">
-
     <link rel="stylesheet" href="{{ asset('js/select.dataTables.min.css') }}">
 
-    <!-- inject:css -->
     <link rel="stylesheet" href="{{ asset('assets/css/vertical-layout-light/style.css') }}">
-    <!-- endinject -->
 
     <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}" />
 
     <style>
         body {
+            /* Pastikan Poppins sudah dipanggil di atas */
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
         }
 
-        /* Cegah popper flip ke atas */
+        /* Optimasi transisi agar navigasi terasa lebih mulus */
+        .sidebar, .main-panel {
+            transition: all 0.3s ease;
+        }
+
         .drop-down-no-flip .dropdown-menu {
             transform: none !important;
             top: 100% !important;
             bottom: auto !important;
             will-change: auto !important;
         }
-        /* Sembunyikan menu title saat sidebar diminimize */
+
         .sidebar-icon-only .sidebar .menu-title {
-        display: none !important;
-        visibility: hidden;
-        pointer-events: none; /* Tidak bisa diklik */
-        width: 0;
-        height: 0;
-        overflow: hidden;
-        opacity: 0;
-        margin: 0;
-        padding: 0;
-        }
-        .fake-placeholder {
-        color: grey;
+            display: none !important;
+            visibility: hidden;
+            pointer-events: none;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
         }
 
-        .fake-placeholder.filled {
-            color: black;
-        }
+        .fake-placeholder { color: grey; }
+        .fake-placeholder.filled { color: black; }
     </style>
+    @livewireStyles
 </head>
 
 <body style="background-color: #EEF5FF;">
@@ -101,47 +98,52 @@
     <!-- Script JS lain -->
     <script src="/assets/js/bootstrap.bundle.min.js"></script>
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
+    // Fungsi pembungkus agar kode bisa dijalankan berulang kali
+    function initAplikasi() {
+        // 1. Logika Toggle Sidebar
         const toggleBtn = document.getElementById('sidebarToggle');
-        toggleBtn.addEventListener('click', function () {
-          document.body.classList.toggle('sidebar-icon-only');
+        if (toggleBtn) {
+            toggleBtn.onclick = function () {
+                document.body.classList.toggle('sidebar-icon-only');
+            };
+        }
+
+        // 2. Logika Fake Placeholder
+        const inputs = document.querySelectorAll('.fake-placeholder');
+        inputs.forEach(input => {
+            const defaultValue = input.value;
+
+            input.onfocus = () => {
+                if (input.value === defaultValue) {
+                    input.value = '';
+                    input.classList.add('filled');
+                }
+            };
+
+            input.onblur = () => {
+                if (input.value.trim() === '') {
+                    input.value = defaultValue;
+                    input.classList.remove('filled');
+                }
+            };
+
+            input.oninput = () => {
+                if (input.value !== defaultValue) {
+                    input.value !== '' ? input.classList.add('filled') : input.classList.remove('filled');
+                }
+            };
         });
-      });
-    </script>
+    }
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const inputs = document.querySelectorAll('.fake-placeholder');
+    // Jalankan saat pertama kali halaman dibuka
+    document.addEventListener("DOMContentLoaded", initAplikasi);
 
-            inputs.forEach(input => {
-                const defaultValue = input.value;
-
-                input.addEventListener('focus', () => {
-                    if (input.value === defaultValue) {
-                        input.value = '';
-                        input.classList.add('filled');
-                    }
-                });
-
-                input.addEventListener('blur', () => {
-                    if (input.value.trim() === '') {
-                        input.value = defaultValue;
-                        input.classList.remove('filled');
-                    }
-                });
-
-                input.addEventListener('input', () => {
-                    if (input.value !== defaultValue) {
-                        input.classList.add('filled');
-                    } else {
-                        input.classList.remove('filled');
-                    }
-                });
-            });
-        });
-    </script>
+    // Jalankan SETIAP KALI pindah halaman via wire:navigate
+    document.addEventListener("livewire:navigated", initAplikasi);
+</script>
 
 @yield('scripts')
+@livewireScripts
 </body>
 
 </html>

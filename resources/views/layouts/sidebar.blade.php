@@ -3,7 +3,8 @@
 
         {{-- Dashboard --}}
         <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('dashboard') }}">
+            {{-- Tambahkan wire:navigate --}}
+            <a class="nav-link" href="{{ route('dashboard') }}" wire:navigate>
                 <i class="icon-grid menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
             </a>
@@ -16,8 +17,8 @@
         </li>
 
         {{-- Manajemen Kegiatan --}}
-        <li class="nav-item {{ request()->routeIs('activity') || request()->routeIs('kegiatans.index') || request()->routeIs('kegiatans.create') || request()->routeIs('kegiatans.edit') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('activity') }}">
+        <li class="nav-item {{ request()->routeIs('activity') || request()->is('kegiatans*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('activity') }}" wire:navigate>
                 <i class="mdi mdi-table-edit menu-icon"></i>
                 <span class="menu-title">
                     {{ Auth::user()->role === 'admin' ? 'Manajemen Kegiatan' : 'Kegiatan Saya' }}
@@ -27,7 +28,7 @@
 
         {{-- Riwayat Kegiatan --}}
         <li class="nav-item {{ request()->routeIs('kegiatans.riwayat') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('kegiatans.riwayat') }}">
+            <a class="nav-link" href="{{ route('kegiatans.riwayat') }}" wire:navigate>
                 <i class="mdi mdi-history menu-icon"></i>
                 <span class="menu-title">Riwayat Kegiatan</span>
             </a>
@@ -35,20 +36,17 @@
 
         {{-- ADMIN PANEL --}}
         @if(Auth::check() && Auth::user()->role === 'admin')
-
             <li class="nav-section">
                 <span class="sidebar-mini-icon"><i class="fa fa-ellipsis-h"></i></span>
                 <h4 class="text-section mt-2 mb-2">Admin Panel</h4>
             </li>
 
             <li class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('users.index') }}">
+                <a class="nav-link" href="{{ route('users.index') }}" wire:navigate>
                     <i class="mdi mdi-folder-account menu-icon"></i>
                     <span class="menu-title">Manajemen Pengguna</span>
                 </a>
             </li>
-
-
         @endif
 
         {{-- MENU LAINNYA --}}
@@ -58,8 +56,8 @@
         </li>
 
         {{-- Pengaturan akun --}}
-        <li class="nav-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('profile.edit') }}">
+        <li class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('profile.edit') }}" wire:navigate>
                 <i class="mdi mdi-account-settings menu-icon"></i>
                 <span class="menu-title">Pengaturan Akun</span>
             </a>
