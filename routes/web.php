@@ -6,7 +6,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\DashboardController;
 
-
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -55,7 +54,7 @@ Route::get('add', [KegiatanController::class, 'create'])
     ->name('add')
     ->middleware('auth');
 
-// Tambah Kegiatan
+// Tambah/simpan Kegiatan
 Route::post('kegiatan', [KegiatanController::class, 'store'])
     ->name('kegiatan.store')
     ->middleware('auth');

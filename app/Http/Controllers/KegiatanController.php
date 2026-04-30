@@ -43,28 +43,30 @@ class KegiatanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-        'tanggal_kegiatan' => 'required|date',
-        'pic' => 'required|string|max:255',
-        'posisi' => 'required|string|max:255',
-        'judul_kegiatan' => 'required|string|max:255',
-        'kategori_kegiatan' => 'required|string|max:255',
-        'deskripsi' => 'nullable|string',
-        'dokumentasi' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+            'tanggal_kegiatan' => 'required|date',
+            'pic' => 'required|string|max:255',
+            'posisi' => 'required|string|max:255',
+            'judul_kegiatan' => 'required|string|max:255',
+            'kategori_kegiatan' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            // 'image' sudah mencakup pengecekan tipe file gambar secara umum
+            'dokumentasi' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ], [
+            // Custom message agar user lebih paham
+            'dokumentasi.image' => 'File harus berupa gambar.',
+            'dokumentasi.mimes' => 'Format gambar yang diizinkan hanya JPG, JPEG, dan PNG.',
+            'dokumentasi.max' => 'Ukuran gambar maksimal adalah 2MB.',
+        ]);
 
-    if ($request->hasFile('dokumentasi')) {
-        $validated['dokumentasi'] = $request->file('dokumentasi')->store('dokumentasi', 'public');
-    }
+        if ($request->hasFile('dokumentasi')) {
+            // Simpan file ke folder 'public/dokumentasi'
+            $path = $request->file('dokumentasi')->store('dokumentasi', 'public');
+            $validated['dokumentasi'] = $path;
+        }
 
-    $validated['user_id'] = Auth::id();
-    $validated['pic'] = Auth::user()-> name;
-    $validated['posisi'] = Auth::user()->position;
+        Kegiatan::create($validated);
 
-    Kegiatan::create($validated);
-
-    return redirect()
-        ->route('kegiatans.index')
-        ->with('success', 'Kegiatan berhasil ditambahkan.');
+        return redirect()->route('index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
     /**

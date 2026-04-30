@@ -8,7 +8,7 @@
     $direction = $currentDirection === 'asc' ? 'desc' : 'asc';
 @endphp
 
-<div class="container-fluid px-4">
+<div class="container-fluid px-4 px-md-5">
     <div class="card mt-4">
         <div class="card-header">
             <h4>Riwayat Kegiatan</h4>
@@ -104,31 +104,35 @@
                 <table class="table table-striped table-bordered align-middle text-center">
                     <thead class="table-dark">
                         <tr>
-                            <th>No</th>
-                            <th>
+                            <th style="width: 50px;">No</th>
+                            <th style="width: 125px;">
                                 <a href="{{ request()->fullUrlWithQuery(['sort' => 'tanggal_kegiatan', 'direction' => $direction]) }}"
                                 class="text-white text-decoration-none">
                                     Tanggal
                                 </a>
                             </th>
-                            <th>PIC</th>
-                            <th>Posisi</th>
-                            <th>Judul</th>
-                            <th>Kategori</th>
-                            <th>Deskripsi</th>
-                            <th>Dokumentasi</th>
+                            <th style="width: 140px;">PIC</th>
+                            <th style="width: 120px;">Posisi</th>
+                            <th style="width: 180px;">Judul</th>
+                            <th style="width: 140px;">Kategori</th>
+                            <th style="width: 300px;">Deskripsi</th>
+                            <th style="width: 135px;">Dokumentasi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($kegiatans as $index => $kegiatan)
                         <tr>
+                            <!-- Kolom No dan Tanggal biasanya pendek, tidak perlu line-clamp -->
                             <td>{{ $kegiatans->firstItem() + $index }}</td>
                             <td>{{ $kegiatan->tanggal_kegiatan }}</td>
-                            <td>{{ $kegiatan->pic }}</td>
-                            <td>{{ $kegiatan->posisi }}</td>
-                            <td>{{ $kegiatan->judul_kegiatan }}</td>
-                            <td>{{ $kegiatan->kategori_kegiatan }}</td>
-                            <td>{{ $kegiatan->deskripsi }}</td>
+
+                            <!-- Bungkus isi dengan DIV line-clamp -->
+                            <td><div class="line-clamp" title="{{ $kegiatan->pic }}">{{ $kegiatan->pic }}</div></td>
+                            <td><div class="line-clamp" title="{{ $kegiatan->posisi }}">{{ $kegiatan->posisi }}</div></td>
+                            <td><div class="line-clamp" title="{{ $kegiatan->judul_kegiatan }}">{{ $kegiatan->judul_kegiatan }}</div></td>
+                            <td><div class="line-clamp" title="{{ $kegiatan->kategori_kegiatan }}">{{ $kegiatan->kategori_kegiatan }}</div></td>
+                            <td><div class="line-clamp" title="{{ $kegiatan->deskripsi }}">{{ $kegiatan->deskripsi }}</div></td>
+
                             <td>
                                 @if($kegiatan->dokumentasi)
                                     <img src="{{ asset('storage/'.$kegiatan->dokumentasi) }}" width="70">
@@ -139,7 +143,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="9">Belum ada kegiatan</td>
+                            <td colspan="8">Belum ada kegiatan</td>
                         </tr>
                         @endforelse
                     </tbody>

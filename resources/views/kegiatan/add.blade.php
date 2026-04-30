@@ -62,7 +62,20 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Dokumentasi Kegiatan</label>
-                                <input type="file" name="dokumentasi" class="form-control" accept="image/*">
+                                <input type="file" name="dokumentasi" id="inputDokumentasi"
+                                    class="form-control @error('dokumentasi') is-invalid @enderror"
+                                    accept="image/jpeg, image/png, image/jpg"
+                                    onchange="previewImage()">
+
+                                @error('dokumentasi')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+
+                                <!-- Tempat Munculnya Preview -->
+                                <div class="mt-2">
+                                    <img id="imgPreview" src="#" alt="Preview Gambar"
+                                        style="display: none; max-height: 200px; border-radius: 8px; border: 1px solid #ddd;">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -85,4 +98,21 @@
     </div>
 
 </div>
+
 @endsection
+
+<script>
+    function previewImage() {
+        const input = document.getElementById('inputDokumentasi');
+        const preview = document.getElementById('imgPreview');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

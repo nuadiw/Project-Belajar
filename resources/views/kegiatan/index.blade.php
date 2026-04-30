@@ -21,7 +21,6 @@
                             <button type="button" id="editButton" class="btn btn-primary btn-md" style="margin-right:8px;" disabled>Edit</button>
                             <button type="button" id="deleteButton" class="btn btn-danger btn-md" disabled>Hapus</button>
                         </div>
-
                         <a href="{{ route('add') }}" class="btn btn-success btn-md">Tambah</a>
                     </div>
 
@@ -30,29 +29,29 @@
                         @method('DELETE')
 
                         <div class="table-responsive mt-2">
-                            <table class="table table-striped table-bordered align-middle text-center">
+                            <table class="table table-striped table-bordered align-middle text-center" style="table-layout: fixed; width: 100%;">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th><input type="checkbox" id="selectAll"></th>
-                                        <th>Tanggal</th>
-                                        <th>PIC</th>
-                                        <th>Posisi</th>
-                                        <th>Judul</th>
-                                        <th>Kategori</th>
-                                        <th>Deskripsi</th>
-                                        <th>Dokumentasi</th>
+                                        <th style="width: 50px;"><input type="checkbox" id="selectAll"></th>
+                                        <th style="width: 125px;">Tanggal</th>
+                                        <th style="width: 140px;">PIC</th>
+                                        <th style="width: 120px;">Posisi</th>
+                                        <th style="width: 180px;">Judul</th>
+                                        <th style="width: 140px;">Kategori</th>
+                                        <th style="width: 300px;">Deskripsi</th>
+                                        <th style="width: 135px;">Dokumentasi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($kegiatans as $kegiatan)
                                     <tr>
                                         <td><input type="checkbox" name="ids[]" class="selectItem" value="{{ $kegiatan->id }}"></td>
-                                        <td>{{ $kegiatan->tanggal_kegiatan }}</td>
-                                        <td>{{ $kegiatan->pic }}</td>
-                                        <td>{{ $kegiatan->posisi }}</td>
-                                        <td>{{ $kegiatan->judul_kegiatan }}</td>
-                                        <td>{{ $kegiatan->kategori_kegiatan }}</td>
-                                        <td>{{ $kegiatan->deskripsi }}</td>
+                                        <td><div class="line-clamp" title="{{ $kegiatan->tanggal_kegiatan }}">{{ $kegiatan->tanggal_kegiatan }}</div></td>
+                                        <td><div class="line-clamp" title="{{ $kegiatan->pic }}">{{ $kegiatan->pic }}</div></td>
+                                        <td><div class="line-clamp" title="{{ $kegiatan->posisi }}">{{ $kegiatan->posisi }}</div></td>
+                                        <td><div class="line-clamp" title="{{ $kegiatan->judul_kegiatan }}">{{ $kegiatan->judul_kegiatan }}</div></td>
+                                        <td><div class="line-clamp" title="{{ $kegiatan->kategori_kegiatan }}">{{ $kegiatan->kategori_kegiatan }}</div></td>
+                                        <td><div class="line-clamp" title="{{ $kegiatan->deskripsi }}">{{ $kegiatan->deskripsi }}</div></td>
                                         <td>
                                             @if($kegiatan->dokumentasi)
                                                 <img src="{{ asset('storage/'.$kegiatan->dokumentasi) }}" alt="Dokumentasi" width="100">
@@ -76,7 +75,7 @@
     </div>
 </div>
 <script>
-    const selectAll = document.getElementById('selectAll');
+    var selectAll = document.getElementById('selectAll');
     const checkboxes = document.querySelectorAll('.selectItem');
     const editButton = document.getElementById('editButton');
     const deleteButton = document.getElementById('deleteButton');

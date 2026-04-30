@@ -5,15 +5,10 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center no-underline">
-                        <img src="{{ asset('assets/image/logo-app.png') }}" class="h-9 w-auto me-2" alt="Logo">
-
-                        <span class="font-bold text-lg text-gray-900 dark:text-white hidden sm:block">
-                            NAMA APLIKASI
-                        </span>
+                    <a href="{{ route('dashboard') }}">
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
-
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
