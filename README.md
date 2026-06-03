@@ -3,12 +3,6 @@
 [![Laravel Version](https://img.shields.io/badge/Laravel-12.x-red.svg)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://php.net)
 
-### 📝 Deskripsi
-Berikan penjelasan singkat 1-2 kalimat tentang apa fungsi aplikasi ini. 
-Contoh: "Sistem informasi manajemen aset kantor berbasis web untuk memudahkan pendataan barang secara real-time."
-
----
-
 ### ✨ Fitur Utama
 Sebutkan apa saja yang sudah berjalan di aplikasi ini:
 - 🔐 **Autentikasi**: Login, Register, dan Reset Password (menggunakan Laravel Breeze).
