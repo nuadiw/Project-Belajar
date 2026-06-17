@@ -22,7 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'position',
+        'position_id',
     ];
 
     /**
@@ -51,6 +51,16 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->role === 'admin';
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class, 'position_id');
+    }
+
+    public function kegiatans()
+    {
+        return $this->hasMany(Kegiatan::class, 'user_id');
     }
 
 }

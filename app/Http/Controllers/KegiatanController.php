@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kegiatan;
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -16,16 +18,10 @@ class KegiatanController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->role === 'admin') {
-        // Admin lihat semua kegiatan
-        $kegiatans = Kegiatan::latest()->get();
-    } else {
-        // User hanya lihat kegiatannya sendiri
-        $kegiatans = Kegiatan::where('user_id', Auth::id())
-            ->latest()
-            ->get();
-    }
-        return view('kegiatan.index', compact('kegiatans'));
+        $kegiatans = Kegiatan::with(['user.position', 'category']) // Wajib pakai user.position
+        ->where('user_id', Auth::id())
+        ->get();
+    return view('kegiatan.index', compact('kegiatans'));
     }
 
     /**
@@ -33,8 +29,18 @@ class KegiatanController extends Controller
      */
     public function create()
     {
-        $user = Auth::user();
-        return view('kegiatan.add', compact('user'));
+        $categories = Category::all(); // Mengambil semua kategori untuk dropdown
+
+        // Jika Admin/Coordinator, ambil semua user untuk fitur delegasi input
+        $users = [];
+        if (Auth::user()->role == 'admin') {
+            $users = User::all();
+        } elseif (Auth::user()->role == 'coordinator') {
+            // Ambil user yang jabatannya sama/satu tim (sesuaikan logika bisnismu)
+            $users = User::where('position_id', Auth::user()->position_id)->get();
+        }
+
+        return view('kegiatan.add', compact('categories', 'users'));
     }
 
     /**
@@ -42,31 +48,32 @@ class KegiatanController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
+            'category_id' => 'required',
+            'judul_kegiatan' => 'required',
             'tanggal_kegiatan' => 'required|date',
-            'pic' => 'required|string|max:255',
-            'posisi' => 'required|string|max:255',
-            'judul_kegiatan' => 'required|string|max:255',
-            'kategori_kegiatan' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            // 'image' sudah mencakup pengecekan tipe file gambar secara umum
-            'dokumentasi' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ], [
-            // Custom message agar user lebih paham
-            'dokumentasi.image' => 'File harus berupa gambar.',
-            'dokumentasi.mimes' => 'Format gambar yang diizinkan hanya JPG, JPEG, dan PNG.',
-            'dokumentasi.max' => 'Ukuran gambar maksimal adalah 2MB.',
+            // Validasi lainnya...
         ]);
 
+        $kegiatan = new Kegiatan();
+        $kegiatan->tanggal_kegiatan = $request->tanggal_kegiatan;
+        $kegiatan->judul_kegiatan = $request->judul_kegiatan;
+        $kegiatan->category_id = $request->category_id; // Simpan ID Kategori
+        $kegiatan->deskripsi = $request->deskripsi;
+
+        // Logika Delegasi Input:
+        // Jika Admin/Coordinator memilih user lain, gunakan ID tersebut.
+        // Jika tidak, gunakan ID user yang sedang login.
+        $kegiatan->user_id = $request->user_id ?? Auth::id();
+
+        // Proses upload dokumentasi...
         if ($request->hasFile('dokumentasi')) {
-            // Simpan file ke folder 'public/dokumentasi'
-            $path = $request->file('dokumentasi')->store('dokumentasi', 'public');
-            $validated['dokumentasi'] = $path;
+            $kegiatan->dokumentasi = $request->file('dokumentasi')->store('dokumentasi', 'public');
         }
 
-        Kegiatan::create($validated);
+        $kegiatan->save();
 
-        return redirect()->route('index')->with('success', 'Kegiatan berhasil ditambahkan!');
+        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dicatat!');
     }
 
     /**
@@ -83,36 +90,42 @@ class KegiatanController extends Controller
     public function edit(string $id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
+
         // Proteksi akses
         if (Auth::user()->role !== 'admin' && $kegiatan->user_id !== Auth::id()) {
             abort(403);
         }
-        return view('kegiatan.edit', compact('kegiatan'));
-    }
+
+        $categories = Category::all(); // Tambahkan ini untuk dropdown di view edit
+        return view('kegiatan.edit', compact('kegiatan', 'categories'));
+        }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
     {
-         $kegiatan = Kegiatan::findOrFail($id);
+        $kegiatan = Kegiatan::findOrFail($id);
 
-            if (Auth::user()->role !== 'admin' && $kegiatan->user_id !== Auth::id()) {
+        if (Auth::user()->role !== 'admin' && $kegiatan->user_id !== Auth::id()) {
             abort(403);
         }
 
         $request->validate([
             'tanggal_kegiatan' => 'required|date',
-            'pic' => 'required|string|max:255',
-            'posisi' => 'required|string|max:255',
-            'judul_kegiatan' => 'required|string|max:255',
-            'kategori_kegiatan' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'dokumentasi' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'category_id'      => 'required|exists:categories,id', // Ganti kategori_kegiatan
+            'judul_kegiatan'   => 'required|string|max:255',
+            'deskripsi'        => 'required|string',
+            'dokumentasi'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->all();
+        $data = $request->except('dokumentasi'); // Ambil semua kecuali file dulu
+
         if ($request->hasFile('dokumentasi')) {
+            // Hapus foto lama jika ada upload baru
+            if ($kegiatan->dokumentasi) {
+                Storage::disk('public')->delete($kegiatan->dokumentasi);
+            }
             $data['dokumentasi'] = $request->file('dokumentasi')->store('dokumentasi', 'public');
         }
 
@@ -126,13 +139,15 @@ class KegiatanController extends Controller
     public function destroy($id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
-        // 🔐 PROTEKSI AKSES (tambahkan ini)
+
         if (Auth::user()->role !== 'admin' && $kegiatan->user_id !== Auth::id()) {
-            abort(403, 'Anda tidak punya akses menghapus kegiatan ini.');
+            abort(403, 'Anda tidak punya akses.');
         }
+
         if ($kegiatan->dokumentasi) {
             Storage::disk('public')->delete($kegiatan->dokumentasi);
         }
+
         $kegiatan->delete();
         return redirect()->route('kegiatans.index')->with('success', 'Kegiatan berhasil dihapus!');
     }
@@ -174,45 +189,48 @@ class KegiatanController extends Controller
     public function riwayat(Request $request)
     {
         $user = Auth::user();
-        $query = Kegiatan::query();
+        // Gunakan with() agar tidak lambat (Eager Loading)
+        $query = Kegiatan::with(['user.position', 'category']);
 
         // 🔐 Role based access
-        if ($user->role !== 'admin') {
+        if ($user->role === 'admin') {
+            // Admin: Lihat semua
+        } elseif ($user->role === 'coordinator') {
+            // Coordinator: Lihat kegiatan tim berdasarkan kesamaan position_id di tabel users
+            $query->whereHas('user', function($q) use ($user) {
+                $q->where('position_id', $user->position_id);
+            });
+        } else {
+            // Staff: Hanya miliknya sendiri
             $query->where('user_id', $user->id);
         }
 
         // 📅 Filter tanggal
         if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $query->whereBetween('tanggal_kegiatan', [
-                $request->tanggal_awal,
-                $request->tanggal_akhir
-            ]);
+            $query->whereBetween('tanggal_kegiatan', [$request->tanggal_awal, $request->tanggal_akhir]);
         }
 
-        // 🏷️ Filter kategori
-        if ($request->filled('kategori')) {
-            $query->where('kategori_kegiatan', 'like', '%'.$request->kategori.'%');
+        // 🏷️ Filter kategori (Sekarang pakai ID)
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
         }
 
-        // 👤 Filter PIC / Nama
-        if ($request->filled('pic')) {
-            $query->where('pic', 'like', '%'.$request->pic.'%');
+        // 👤 Filter PIC / Nama (Mencari di tabel users)
+        if ($request->filled('nama_user')) {
+            $query->whereHas('user', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->nama_user . '%');
+            });
         }
 
         // ↕️ Sorting
-        if ($request->filled('sort')) {
-            $query->orderBy(
-                $request->sort,
-                $request->direction === 'desc' ? 'desc' : 'asc'
-            );
-        } else {
-            $query->orderBy('tanggal_kegiatan', 'desc');
-        }
+        $sortField = $request->get('sort', 'tanggal_kegiatan');
+        $direction = $request->get('direction', 'desc');
+        $query->orderBy($sortField, $direction);
 
-        $kegiatans = $query->paginate(10)
-            ->appends($request->query());
+        $kegiatans = $query->paginate(10)->appends($request->query());
+        $categories = Category::all(); // Untuk dropdown filter di view
 
-        return view('kegiatan.history', compact('kegiatans'));
+        return view('kegiatan.history', compact('kegiatans', 'categories'));
     }
 
     // Create PDF
@@ -221,8 +239,14 @@ class KegiatanController extends Controller
         $user = Auth::user();
         $query = Kegiatan::query();
 
-        // 🔐 Role based
-        if ($user->role !== 'admin') {
+        // 🔐 FIX: Samakan Role Based Access dengan fungsi riwayat
+        if ($user->role === 'admin') {
+            // Admin: Biarkan query tanpa filter tambahan agar ambil semua data
+        } elseif ($user->role === 'coordinator') {
+            // Coordinator: Ambil data satu tim berdasarkan kolom 'posisi'
+            $query->where('posisi', $user->position);
+        } else {
+            // Member/Staff: Hanya ambil data miliknya sendiri
             $query->where('user_id', $user->id);
         }
 
@@ -236,12 +260,13 @@ class KegiatanController extends Controller
 
         // 🏷️ Kategori
         if ($request->filled('kategori')) {
-            $query->where('kategori_kegiatan', $request->kategori);
+            // Gunakan 'like' agar lebih fleksibel jika ada spasi/perbedaan case
+            $query->where('kategori_kegiatan', 'like', '%' . $request->kategori . '%');
         }
 
         // 👤 PIC
         if ($request->filled('pic')) {
-            $query->where('pic', 'like', '%'.$request->pic.'%');
+            $query->where('pic', 'like', '%' . $request->pic . '%');
         }
 
         // ↕️ Sorting
@@ -256,6 +281,7 @@ class KegiatanController extends Controller
 
         $kegiatans = $query->get();
 
+        // Pastikan view 'kegiatan.pdf' sudah menggunakan loop @foreach($kegiatans as $k)
         $pdf = Pdf::loadView('kegiatan.pdf', [
             'kegiatans' => $kegiatans,
             'user' => $user
@@ -266,7 +292,6 @@ class KegiatanController extends Controller
             return $pdf->download('riwayat-kegiatan.pdf');
         }
 
-        // default = preview
         return $pdf->stream('riwayat-kegiatan.pdf');
     }
 

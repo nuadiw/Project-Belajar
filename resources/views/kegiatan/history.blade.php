@@ -127,11 +127,40 @@
                             <td>{{ $kegiatan->tanggal_kegiatan }}</td>
 
                             <!-- Bungkus isi dengan DIV line-clamp -->
-                            <td><div class="line-clamp" title="{{ $kegiatan->pic }}">{{ $kegiatan->pic }}</div></td>
-                            <td><div class="line-clamp" title="{{ $kegiatan->posisi }}">{{ $kegiatan->posisi }}</div></td>
-                            <td><div class="line-clamp" title="{{ $kegiatan->judul_kegiatan }}">{{ $kegiatan->judul_kegiatan }}</div></td>
-                            <td><div class="line-clamp" title="{{ $kegiatan->kategori_kegiatan }}">{{ $kegiatan->kategori_kegiatan }}</div></td>
-                            <td><div class="line-clamp" title="{{ $kegiatan->deskripsi }}">{{ $kegiatan->deskripsi }}</div></td>
+                            {{-- Kolom PIC --}}
+                            <td>
+                                <div class="line-clamp" title="{{ $kegiatan->user->name ?? '-' }}">
+                                    {{ $kegiatan->user->name ?? '-' }}
+                                </div>
+                            </td>
+
+                            {{-- Kolom Posisi --}}
+                            <td>
+                                <div class="line-clamp" title="{{ $kegiatan->user->position->name ?? '-' }}">
+                                    {{ $kegiatan->user->position->name ?? '-' }}
+                                </div>
+                            </td>
+
+                            {{-- Kolom Judul --}}
+                            <td>
+                                <div class="line-clamp" title="{{ $kegiatan->judul_kegiatan }}">
+                                    {{ $kegiatan->judul_kegiatan }}
+                                </div>
+                            </td>
+
+                            {{-- Kolom Kategori --}}
+                            <td>
+                                <div class="line-clamp" title="{{ $kegiatan->category->name ?? '-' }}">
+                                    {{ $kegiatan->category->name ?? '-' }}
+                                </div>
+                            </td>
+
+                            {{-- Kolom Deskripsi --}}
+                            <td>
+                                <div class="line-clamp" title="{{ $kegiatan->deskripsi }}">
+                                    {{ $kegiatan->deskripsi }}
+                                </div>
+                            </td>
 
                             <td>
                                 @if($kegiatan->dokumentasi)

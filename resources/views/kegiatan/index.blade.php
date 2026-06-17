@@ -46,15 +46,55 @@
                                     @forelse($kegiatans as $kegiatan)
                                     <tr>
                                         <td><input type="checkbox" name="ids[]" class="selectItem" value="{{ $kegiatan->id }}"></td>
-                                        <td><div class="line-clamp" title="{{ $kegiatan->tanggal_kegiatan }}">{{ $kegiatan->tanggal_kegiatan }}</div></td>
-                                        <td><div class="line-clamp" title="{{ $kegiatan->pic }}">{{ $kegiatan->pic }}</div></td>
-                                        <td><div class="line-clamp" title="{{ $kegiatan->posisi }}">{{ $kegiatan->posisi }}</div></td>
-                                        <td><div class="line-clamp" title="{{ $kegiatan->judul_kegiatan }}">{{ $kegiatan->judul_kegiatan }}</div></td>
-                                        <td><div class="line-clamp" title="{{ $kegiatan->kategori_kegiatan }}">{{ $kegiatan->kategori_kegiatan }}</div></td>
-                                        <td><div class="line-clamp" title="{{ $kegiatan->deskripsi }}">{{ $kegiatan->deskripsi }}</div></td>
+
+                                        {{-- Tanggal --}}
+                                        <td>
+                                            <div class="line-clamp" title="{{ $kegiatan->tanggal_kegiatan }}">
+                                                {{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan)->format('d/m/Y') }}
+                                            </div>
+                                        </td>
+
+                                        {{-- PIC (Mengambil Nama User) --}}
+                                        <td>
+                                            <div class="line-clamp" title="{{ $kegiatan->user->name }}">
+                                                {{ $kegiatan->user->name }}
+                                            </div>
+                                        </td>
+
+                                        {{-- Posisi (Mengambil dari Relasi User ke Position) --}}
+                                        <td>
+                                            <div class="line-clamp" title="{{ $kegiatan->user->position->name ?? '-' }}">
+                                                {{ $kegiatan->user->position->name ?? '-' }}
+                                            </div>
+                                        </td>
+
+                                        {{-- Judul --}}
+                                        <td>
+                                            <div class="line-clamp" title="{{ $kegiatan->judul_kegiatan }}">
+                                                {{ $kegiatan->judul_kegiatan }}
+                                            </div>
+                                        </td>
+
+                                        {{-- Kategori (Mengambil dari Relasi ke Tabel Categories) --}}
+                                        <td>
+                                            <div class="line-clamp" title="{{ $kegiatan->category->name ?? '-' }}">
+                                                {{ $kegiatan->category->name ?? '-' }}
+                                            </div>
+                                        </td>
+
+                                        {{-- Deskripsi --}}
+                                        <td>
+                                            <div class="line-clamp" title="{{ $kegiatan->deskripsi }}">
+                                                {{ $kegiatan->deskripsi }}
+                                            </div>
+                                        </td>
+
+                                        {{-- Dokumentasi --}}
                                         <td>
                                             @if($kegiatan->dokumentasi)
-                                                <img src="{{ asset('storage/'.$kegiatan->dokumentasi) }}" alt="Dokumentasi" width="100">
+                                                <a href="{{ asset('storage/'.$kegiatan->dokumentasi) }}" target="_blank">
+                                                    <img src="{{ asset('storage/'.$kegiatan->dokumentasi) }}" alt="Dokumentasi" width="100" class="img-thumbnail">
+                                                </a>
                                             @else
                                                 <span class="text-muted">Tidak ada</span>
                                             @endif

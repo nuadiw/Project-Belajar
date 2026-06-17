@@ -12,71 +12,52 @@
             <div class="card-body">
                 <form action="{{ route('kegiatan.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="row">
-                        {{-- KIRI --}}
-                        <div class="col-md-6">
+                    <p class="mb-4">Melaporkan sebagai: <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->position }})</p>
+                    {{-- Field Tanggal --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Tanggal Kegiatan</label>
+                        <input type="date" name="tanggal_kegiatan" class="form-control" value="{{ date('Y-m-d') }}" required>
+                    </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Tanggal</label>
-                                <input type="date" name="tanggal_kegiatan" class="form-control" required>
-                            </div>
+                    {{-- Field Judul --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Judul Kegiatan</label>
+                        <input type="text" name="judul_kegiatan" class="form-control" placeholder="Apa yang anda kerjakan hari ini?" required>
+                    </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Nama PIC</label>
-                                <input type="text" name="pic" class="form-control" value="{{ Auth::user()->name }}" readonly>
-                            </div>
+                    {{-- Field Kategori --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Kategori</label>
+                        <select name="kategori_kegiatan" class="form-select shadow-sm" required>
+                            <option value="" selected disabled>-- Pilih Kategori --</option>
+                            <option value="Internal">Internal</option>
+                            <option value="Eksternal">Eksternal</option>
+                            <option value="Pelatihan">Pelatihan</option>
+                            <option value="Meeting">Meeting</option>
+                        </select>
+                    </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Posisi/Jabatan</label>
-                                <input type="text" name="posisi" class="form-control" value="{{ Auth::user()->position }}" readonly>
-                            </div>
+                    {{-- Field Deskripsi --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Deskripsi Detail</label>
+                        <textarea name="deskripsi" class="form-control" rows="6" placeholder="Jelaskan secara rinci progres kegiatan anda..." required></textarea>
+                    </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Judul Kegiatan</label>
-                                <input type="text" name="judul_kegiatan" class="form-control" required>
-                            </div>
+                    {{-- Field Dokumentasi --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Dokumentasi (Gambar)</label>
+                        <input type="file" name="dokumentasi" id="inputDokumentasi"
+                            class="form-control @error('dokumentasi') is-invalid @enderror"
+                            accept="image/jpeg, image/png, image/jpg"
+                            onchange="previewImage()">
 
-                        </div>
+                        @error('dokumentasi')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
 
-                        {{-- KANAN --}}
-                        <div class="col-md-6">
-
-                            <div class="mb-3">
-                                <label class="form-label d-block">Kategori Keterangan</label>
-                                <select name="kategori_kegiatan"
-                                        id="kategori_kegiatan"
-                                        class="form-select shadow-sm"
-                                        required>
-                                    <option value="" selected disabled>-- Pilih Kategori --</option>
-                                    <option value="Internal">Internal</option>
-                                    <option value="Eksternal">Eksternal</option>
-                                    <option value="Pelatihan">Pelatihan</option>
-                                    <option value="Meeting">Meeting</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Deskripsi Kegiatan</label>
-                                <textarea name="deskripsi" class="form-control" rows="5" required></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Dokumentasi Kegiatan</label>
-                                <input type="file" name="dokumentasi" id="inputDokumentasi"
-                                    class="form-control @error('dokumentasi') is-invalid @enderror"
-                                    accept="image/jpeg, image/png, image/jpg"
-                                    onchange="previewImage()">
-
-                                @error('dokumentasi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-
-                                <!-- Tempat Munculnya Preview -->
-                                <div class="mt-2">
-                                    <img id="imgPreview" src="#" alt="Preview Gambar"
-                                        style="display: none; max-height: 200px; border-radius: 8px; border: 1px solid #ddd;">
-                                </div>
-                            </div>
+                        <div class="mt-3 text-center">
+                            <img id="imgPreview" src="#" alt="Preview"
+                                style="display: none; max-width: 100%; max-height: 300px; border-radius: 8px; border: 2px dashed #ddd; padding: 5px;">
                         </div>
                     </div>
 

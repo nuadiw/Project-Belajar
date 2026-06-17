@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -22,7 +23,7 @@ class UserController extends Controller
         $user->role = $request->role;
         $user->save();
 
-        return redirect()->route('users.index')->with('success', 'Role berhasil diperbarui.');
+        return redirect()->route('users.index')->with('success', 'Role berhasil diperbarui!');
     }
 
     public function edit($id)
@@ -39,8 +40,8 @@ class UserController extends Controller
         $request->validate([
             'name'   => 'required|string|max:255',
             'email'  => 'required|email|max:255',
-            'role'   => 'required|in:admin,user',
-            'position' => 'nullable|string|max:255',
+            'role'   => 'required|in:admin,coordinator,user',
+            'position' => 'required|string|max:255',
         ]);
 
         // ✅ UPDATE TERMASUK POSISI
@@ -51,7 +52,7 @@ class UserController extends Controller
             'position' => $request->position,
         ]);
 
-        return redirect()->back()->with('success', 'User updated successfully.');
+        return redirect()->back()->with('success', 'User berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -59,6 +60,27 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
+        return redirect()->route('users.index')->with('success', 'User berhasil dihapus!');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'position' => 'required|string|max:255',
+            'role' => 'required|in:admin,coordinator,user',
+            'password' => 'required|min:8',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'position' => $request->position,
+            'role' => $request->role,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->back()->with('success', 'User baru berhasil ditambahkan!');
     }
 }

@@ -14,7 +14,9 @@
                         </p>
                     </div>
                     <div class="col d-flex justify-content-end">
-                        <button type="submit" class="btn btn-success">+ Tambah</button>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahUser">
+                            + Tambah Pengguna
+                        </button>
                     </div>
                 </div>
 
@@ -95,8 +97,9 @@
                                     <div class="mb-3">
                                         <label for="edit-role" class="form-label">Role</label>
                                         <select id="edit-role" name="role" class="form-select" required>
-                                            <option value="user">User</option>
                                             <option value="admin">Admin</option>
+                                            <option value="coordinator">Coordinator</option>
+                                            <option value="user">User</option>
                                         </select>
                                     </div>
                                 </div>
@@ -110,6 +113,52 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalTambahUser" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('users.store') }}" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Pengguna Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Nama Lengkap</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Jabatan / Posisi</label>
+                        <input type="text" name="position" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Role</label>
+                        <select name="role" class="form-select">
+                            <option value="user">Member / Staff</option>
+                            <option value="coordinator">Coordinator</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Password Default</label>
+                        <input type="password" name="password" class="form-control" value="password123">
+                        <small class="text-muted">Default: password123</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Pengguna</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
