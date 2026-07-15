@@ -12,7 +12,7 @@
             <div class="card-body">
                 <form action="{{ route('kegiatan.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <p class="mb-4">Melaporkan sebagai: <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->position }})</p>
+                    <p class="mb-4">Melaporkan sebagai: <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->position->name }})</p>
                     {{-- Field Tanggal --}}
                     <div class="mb-4">
                         <label class="form-label fw-bold">Tanggal Kegiatan</label>
@@ -28,12 +28,15 @@
                     {{-- Field Kategori --}}
                     <div class="mb-4">
                         <label class="form-label fw-bold">Kategori</label>
-                        <select name="kategori_kegiatan" class="form-select shadow-sm" required>
+                        <select name="category_id" class="form-select shadow-sm" required>
                             <option value="" selected disabled>-- Pilih Kategori --</option>
-                            <option value="Internal">Internal</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                            {{-- <option value="Internal">Internal</option>
                             <option value="Eksternal">Eksternal</option>
                             <option value="Pelatihan">Pelatihan</option>
-                            <option value="Meeting">Meeting</option>
+                            <option value="Meeting">Meeting</option> --}}
                         </select>
                     </div>
 

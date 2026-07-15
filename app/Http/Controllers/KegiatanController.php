@@ -73,7 +73,7 @@ class KegiatanController extends Controller
 
         $kegiatan->save();
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dicatat!');
+        return redirect()->route('kegiatans.index')->with('success', 'Kegiatan berhasil dicatat!');
     }
 
     /**
@@ -212,15 +212,22 @@ class KegiatanController extends Controller
 
         // 🏷️ Filter kategori (Sekarang pakai ID)
         if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
+                $query->where('category_id', $request->category_id);
+            }
+
+            $kegiatans = $query->latest('tanggal_kegiatan')->paginate(10);
+            $kegiatans->appends($request->all());
+
+            // 3. Ambil semua master data kategori dari database
+            $categories = Category::all();
 
         // 👤 Filter PIC / Nama (Mencari di tabel users)
-        if ($request->filled('nama_user')) {
-            $query->whereHas('user', function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->nama_user . '%');
-            });
-        }
+        if ($request->filled('pic')) {
+        $query->whereHas('user', function($q) use ($request) {
+            // Menggunakan LIKE agar pencarian nama bersifat fleksibel (tidak harus sama persis)
+            $q->where('name', 'like', '%' . $request->pic . '%');
+        });
+    }
 
         // ↕️ Sorting
         $sortField = $request->get('sort', 'tanggal_kegiatan');

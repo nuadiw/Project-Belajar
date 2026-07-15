@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text">
+    <button id="submit">Simpan</button>
+    <li id="container">
+
+    </li>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const submit = document.querySelector('#submit');
+            const input = document.querySelector('input');
+            const container = document.querySelector('#container');
+            let items = JSON.parse(localStorage.getItem('data')) ?? [];
+
+            items.map(function(item) {
+                container.innerHTML += `
+                    <ul>${item}</ul>
+                `;
+
+            });
+
+
+
+            submit.addEventListener('click', function() {
+                const text = input.value;
+
+                container.innerHTML += `
+                    <ul>${text}</ul>
+                `;
+
+                input.value = "";
+
+                items = [...items, text];
+                console.log(items)
+                localStorage.setItem("data", JSON.stringify(items))
+            });
+        });
+    </script>
+</body>
+</html>

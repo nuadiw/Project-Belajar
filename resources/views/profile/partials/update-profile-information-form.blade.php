@@ -55,31 +55,11 @@
             @endif
         </div>
 
-        <!-- Position field (NEW) -->
-        <div class="mb-3">
-            <x-input-label for="position" :value="__('Position')" />
-            <x-text-input id="position" name="position" type="text"
-                class="mt-1 form-control fake-placeholder"
-                value="{{ old('position', $user->position) }}"
-                required autocomplete="organization-title" />
-            <x-input-error class="mt-2" :messages="$errors->get('position')" />
-        </div>
-
         <!-- Submit -->
         <div class="d-flex align-items-center gap-3">
             <button type="submit" class="btn btn-success">
                 {{ __('Save') }}
             </button>
-
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-muted small"
-                >{{ __('Profil berhasil diperbarui.') }}</p>
-            @endif
         </div>
     </form>
 </section>

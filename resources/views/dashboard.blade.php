@@ -36,142 +36,142 @@
             </div>
 
             <!-- Ringkasan Statistik -->
-<div class="row">
+            <div class="row">
 
-    @if(Auth::user()->role === 'admin')
-        {{-- Tampilan Admin --}}
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-tale">
-                <div class="card-body">
-                    <p class="mb-2">Total Kegiatan</p>
-                    <p class="fs-30 mb-2">{{ $stats['total_kegiatan'] }}</p>
-                    <p>Keseluruhan data</p>
-                </div>
+                @if(Auth::user()->role === 'admin')
+                    {{-- Tampilan Admin --}}
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-tale">
+                            <div class="card-body">
+                                <p class="mb-2">Total Kegiatan</p>
+                                <p class="fs-30 mb-2">{{ $stats['total_kegiatan'] }}</p>
+                                <p>Keseluruhan data</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-dark-blue">
+                            <div class="card-body">
+                                <p class="mb-2">Hari Ini</p>
+                                <p class="fs-30 mb-2">{{ $stats['kegiatan_hari_ini'] }}</p>
+                                <p>Aktivitas hari ini</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-light-danger">
+                            <div class="card-body">
+                                <p class="mb-2">Kegiatan Bulan Ini</p>
+                                <p class="fs-30 mb-2">{{ $stats['kegiatan_bulan_ini'] }}</p>
+                                <p>{{ now()->format('F Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-light-blue">
+                            <div class="card-body">
+                                <p class="mb-2">Total User</p>
+                                <p class="fs-30 mb-2">{{ $stats['total_user'] }}</p>
+                                <p>Pengguna terdaftar</p>
+                            </div>
+                        </div>
+                    </div>
+
+                @elseif(Auth::user()->role === 'coordinator')
+                    {{-- Tampilan Coordinator --}}
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-tale">
+                            <div class="card-body">
+                                <p class="mb-2">Total Kegiatan Tim</p>
+                                <p class="fs-30 mb-2">{{ $stats['total_kegiatan_tim'] }}</p>
+                                <p>Divisi: {{ Auth::user()->position->name ?? '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-dark-blue">
+                            <div class="card-body">
+                                <p class="mb-2">Tim Hari Ini</p>
+                                <p class="fs-30 mb-2">{{ $stats['kegiatan_hari_ini'] }}</p>
+                                <p>Aktivitas hari ini</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-light-blue">
+                            <div class="card-body">
+                                <p class="mb-2">Tim Bulan Ini</p>
+                                <p class="fs-30 mb-2">{{ $stats['kegiatan_bulan_ini'] }}</p>
+                                <p>{{ now()->format('F Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-light-danger">
+                            <div class="card-body">
+                                <p class="mb-2">Total Anggota</p>
+                                <p class="fs-30 mb-2">{{ $stats['total_anggota_tim'] }}</p>
+                                <p>User aktif di tim</p>
+                            </div>
+                        </div>
+                    </div>
+
+                @else
+                    {{-- Tampilan Staff (Default) --}}
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-tale">
+                            <div class="card-body">
+                                <p class="mb-2">Total Kegiatan Saya</p>
+                                <p class="fs-30 mb-2">{{ $stats['total_kegiatan_saya'] }}</p>
+                                <p>Kontribusi pribadi</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-dark-blue">
+                            <div class="card-body">
+                                <p class="mb-2">Hari Ini</p>
+                                <p class="fs-30 mb-2">{{ $stats['kegiatan_hari_ini'] }}</p>
+                                <p>Progres harian</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-light-blue">
+                            <div class="card-body">
+                                <p class="mb-2">Bulan Ini</p>
+                                <p class="fs-30 mb-2">{{ $stats['kegiatan_bulan_ini'] }}</p>
+                                <p>{{ now()->format('F Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4 stretch-card transparent">
+                        <div class="card card-light-danger">
+                            <div class="card-body">
+                                <p class="mb-2">Kategori Utama</p>
+                                <p class="fs-30 mb-2">{{ $stats['kategori_terbanyak'] }}</p>
+                                <p>Fokus terbanyak</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
             </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-dark-blue">
-                <div class="card-body">
-                    <p class="mb-2">Hari Ini</p>
-                    <p class="fs-30 mb-2">{{ $stats['kegiatan_hari_ini'] }}</p>
-                    <p>Aktivitas hari ini</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-light-danger">
-                <div class="card-body">
-                    <p class="mb-2">Kegiatan Bulan Ini</p>
-                    <p class="fs-30 mb-2">{{ $stats['kegiatan_bulan_ini'] }}</p>
-                    <p>{{ now()->format('F Y') }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-light-blue">
-                <div class="card-body">
-                    <p class="mb-2">Total User</p>
-                    <p class="fs-30 mb-2">{{ $stats['total_user'] }}</p>
-                    <p>Pengguna terdaftar</p>
-                </div>
-            </div>
-        </div>
-
-    @elseif(Auth::user()->role === 'coordinator')
-        {{-- Tampilan Coordinator --}}
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-tale">
-                <div class="card-body">
-                    <p class="mb-2">Total Kegiatan Tim</p>
-                    <p class="fs-30 mb-2">{{ $stats['total_kegiatan_tim'] }}</p>
-                    <p>Divisi: {{ Auth::user()->position }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-dark-blue">
-                <div class="card-body">
-                    <p class="mb-2">Tim Hari Ini</p>
-                    <p class="fs-30 mb-2">{{ $stats['kegiatan_hari_ini'] }}</p>
-                    <p>Aktivitas hari ini</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-light-blue">
-                <div class="card-body">
-                    <p class="mb-2">Tim Bulan Ini</p>
-                    <p class="fs-30 mb-2">{{ $stats['kegiatan_bulan_ini'] }}</p>
-                    <p>{{ now()->format('F Y') }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-light-danger">
-                <div class="card-body">
-                    <p class="mb-2">Total Anggota</p>
-                    <p class="fs-30 mb-2">{{ $stats['total_anggota_tim'] }}</p>
-                    <p>User aktif di tim</p>
-                </div>
-            </div>
-        </div>
-
-    @else
-        {{-- Tampilan Staff (Default) --}}
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-tale">
-                <div class="card-body">
-                    <p class="mb-2">Total Kegiatan Saya</p>
-                    <p class="fs-30 mb-2">{{ $stats['total_kegiatan_saya'] }}</p>
-                    <p>Kontribusi pribadi</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-dark-blue">
-                <div class="card-body">
-                    <p class="mb-2">Hari Ini</p>
-                    <p class="fs-30 mb-2">{{ $stats['kegiatan_hari_ini'] }}</p>
-                    <p>Progres harian</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-light-blue">
-                <div class="card-body">
-                    <p class="mb-2">Bulan Ini</p>
-                    <p class="fs-30 mb-2">{{ $stats['kegiatan_bulan_ini'] }}</p>
-                    <p>{{ now()->format('F Y') }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-light-danger">
-                <div class="card-body">
-                    <p class="mb-2">Kategori Utama</p>
-                    <p class="fs-30 mb-2">{{ $stats['kategori_terbanyak'] }}</p>
-                    <p>Fokus terbanyak</p>
-                </div>
-            </div>
-        </div>
-    @endif
-
-</div>
 
             <!-- Daftar Laporan Terbaru -->
             <div class="row-mt-3">
                 <div class="card mt-3">
                     <div class="card-body">
-                        <h5 class="mb-4">Recent Activities</h5>
+                        <h5 class="mb-4">Aktivitas Tim (Terbaru)</h5>
                         <div class="table table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -188,9 +188,9 @@
                                     @forelse ($kegiatanTerbaru as $item)
                                         <tr>
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_kegiatan)->format('d-m-Y') }}</td>
-                                            <td>{{ $item->pic }}</td>
+                                            <td>{{ $item->user->name }}</td>
                                             <td>{{ $item->judul_kegiatan }}</td>
-                                            <td>{{ $item->kategori_kegiatan }}</td>
+                                            <td>{{ $item->category->name ?? '-' }}</td>
                                             <td>{{ \Illuminate\Support\Str::limit($item->deskripsi, 50) }}</td>
                                             <td>
                                                 @if($item->dokumentasi)

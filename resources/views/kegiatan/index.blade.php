@@ -8,7 +8,6 @@
                 <h4 class="card-title">Daftar Kegiatan Individu</h4>
             </div>
             <div class="card-body">
-                <p>Periode: </p>
                 <div class="table table-responsive">
                     @if(session('success'))
                         <div class="alert alert-success mt-3">{{ session('success') }}</div>

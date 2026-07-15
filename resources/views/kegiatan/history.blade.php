@@ -34,12 +34,11 @@
                         class="form-control">
                 </div>
 
-                {{-- Kategori --}}
+                {{-- Kategori Dinamis --}}
                 <div class="col-md-2">
                     <label class="form-label">Kategori</label>
 
-                    <input type="hidden" name="kategori" id="kategoriInput"
-                        value="{{ request('kategori') }}">
+                    <input type="hidden" name="category_id" id="kategoriInput" value="{{ request('category_id') }}">
 
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-between"
@@ -48,20 +47,27 @@
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false">
                             <span id="kategoriLabel">
-                                {{ request('kategori') ?: 'Semua Kategori' }}
+                                @if(request('category_id') && $categories->where('id', request('category_id'))->first())
+                                    {{ $categories->where('id', request('category_id'))->first()->name }}
+                                @else
+                                    Semua Kategori
+                                @endif
                             </span>
                             <span class="ms-2">▾</span>
                         </button>
 
-                        <div class="dropdown-menu w-100" aria-labelledby="kategoriDropdown">
-                            <button type="button" class="dropdown-item"
-                                    onclick="setKategori('Internal', 'Internal')">Internal</button>
-                            <button type="button" class="dropdown-item"
-                                    onclick="setKategori('Eksternal', 'Eksternal')">Eksternal</button>
-                            <button type="button" class="dropdown-item"
-                                    onclick="setKategori('Pelatihan', 'Pelatihan')">Pelatihan</button>
-                            <button type="button" class="dropdown-item"
-                                    onclick="setKategori('Meeting', 'Meeting')">Meeting</button>
+                        <div class="dropdown-menu w-100" aria-labelledby="kategoriDropdown" style="max-height: 200px; overflow-y: auto;">
+                            <button type="button" class="dropdown-item text-danger" onclick="setKategori('', 'Semua Kategori')">
+                                Semua Kategori
+                            </button>
+                            <div class="dropdown-divider"></div>
+
+                            @foreach($categories as $category)
+                                <button type="button" class="dropdown-item"
+                                        onclick="setKategori('{{ $category->id }}', '{{ $category->name }}')">
+                                    {{ $category->name }}
+                                </button>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -85,17 +91,6 @@
                     <a href="{{ route('kegiatans.riwayat') }}"
                     class="btn btn-danger">
                         Reset
-                    </a>
-                </div>
-
-                <div class="col-md-12 text-end">
-                    {{-- Preview PDF --}}
-                    <a href="{{ route('kegiatans.export.pdf', array_merge(request()->query(), ['mode' => 'preview'])) }}" target="_blank" class="btn btn-outline-primary me-2">
-                        Preview PDF
-                    </a>
-                    {{-- Download PDF --}}
-                    <a href="{{ route('kegiatans.export.pdf', array_merge(request()->query(), ['mode' => 'download'])) }}" class="btn btn-danger">
-                        Download PDF
                     </a>
                 </div>
             </form>
@@ -184,6 +179,17 @@
                 {{ $kegiatans->appends(request()->query())->links() }}
             </div>
 
+            <div class="col-md-12 text-end">
+                {{-- Preview PDF --}}
+                <a href="{{ route('kegiatans.export.pdf', array_merge(request()->query(), ['mode' => 'preview'])) }}" target="_blank" class="btn btn-info me-2">
+                    Preview PDF
+                </a>
+                {{-- Download PDF --}}
+                <a href="{{ route('kegiatans.export.pdf', array_merge(request()->query(), ['mode' => 'download'])) }}" class="btn btn-success">
+                    Download PDF
+                </a>
+            </div>
+
         </div>
     </div>
 </div>
@@ -192,6 +198,10 @@
     function setKategori(value, label) {
         document.getElementById('kategoriInput').value = value;
         document.getElementById('kategoriLabel').innerText = label;
+        // const filterForm = document.getElementById('kategoriInput').closest('form');
+        // if (filterForm) {
+        //     filterForm.submit();
+        // }
     }
 </script>
 
